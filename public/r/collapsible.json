@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "collapsible",
+  "dependencies": [
+    "@base-ui/react",
+    "class-variance-authority",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/default/ui/collapsible.tsx",
+      "content": "import { Collapsible as CollapsiblePrimitive } from \"@base-ui/react/collapsible\";\n\nimport { cn } from \"@/registry/default/lib/utils\";\n\nfunction Collapsible({ ...props }: CollapsiblePrimitive.Root.Props) {\n  return <CollapsiblePrimitive.Root data-slot=\"collapsible\" {...props} />;\n}\n\nfunction CollapsibleTrigger({ className, ...props }: CollapsiblePrimitive.Trigger.Props) {\n  return (\n    <CollapsiblePrimitive.Trigger\n      className={cn(\"cursor-pointer\", className)}\n      data-slot=\"collapsible-trigger\"\n      {...props}\n    />\n  );\n}\n\nfunction CollapsiblePanel({\n  className,\n  animate = true,\n  ...props\n}: CollapsiblePrimitive.Panel.Props & { animate?: boolean }) {\n  return (\n    <CollapsiblePrimitive.Panel\n      className={cn(\n        \"overflow-hidden\",\n        animate &&\n          \"h-(--collapsible-panel-height) transition-[height] duration-200 motion-reduce:transition-none data-ending-style:h-0 data-starting-style:h-0 data-open:data-ending-style:[height:var(--collapsible-panel-height)]\",\n        className,\n      )}\n      data-slot=\"collapsible-panel\"\n      {...props}\n    />\n  );\n}\n\nexport {\n  Collapsible,\n  CollapsibleTrigger,\n  CollapsiblePanel,\n  CollapsiblePanel as CollapsibleContent,\n};\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "registry/default/lib/utils.ts",
+      "content": "import { type CxOptions, cx } from \"class-variance-authority\";\nimport { extendTailwindMerge } from \"tailwind-merge\";\n\n// Register the extra font sizes extracted from T3 Code's theme so tailwind-merge\n// does not treat text-2xs etc. as colors.\nconst twMerge = extendTailwindMerge({\n  extend: {\n    theme: { text: [\"2xs\", \"3xs\", \"4xs\", \"5xs\"] },\n  },\n});\n\nexport function cn(...inputs: CxOptions) {\n  return twMerge(cx(inputs));\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:ui"
+}

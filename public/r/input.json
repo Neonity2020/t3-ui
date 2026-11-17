@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input",
+  "dependencies": [
+    "@base-ui/react",
+    "class-variance-authority",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/default/ui/input.tsx",
+      "content": "import { Input as InputPrimitive } from \"@base-ui/react/input\";\nimport type * as React from \"react\";\n\nimport { cn } from \"@/registry/default/lib/utils\";\n\ntype InputProps = Omit<InputPrimitive.Props & React.RefAttributes<HTMLInputElement>, \"size\"> & {\n  size?: \"sm\" | \"compact\" | \"default\" | \"lg\" | number;\n  font?: \"default\" | \"mono\";\n  unstyled?: boolean;\n  nativeInput?: boolean;\n};\n\nfunction Input({\n  className,\n  size = \"default\",\n  font = \"default\",\n  unstyled = false,\n  nativeInput = false,\n  ...props\n}: InputProps) {\n  const inputClassName = cn(\n    \"h-8.5 w-full min-w-0 rounded-[inherit] px-[calc(--spacing(3)-1px)] leading-8.5 outline-none placeholder:text-placeholder sm:h-7.5 sm:leading-7.5 [transition:background-color_5000000s_ease-in-out_0s]\",\n    size === \"compact\" && \"h-7 px-[calc(--spacing(2.5)-1px)] text-xs leading-7 sm:h-7 sm:leading-7\",\n    size === \"sm\" && \"h-7.5 px-[calc(--spacing(2.5)-1px)] leading-7.5 sm:h-6.5 sm:leading-6.5\",\n    size === \"lg\" && \"h-9.5 leading-9.5 sm:h-8.5 sm:leading-8.5\",\n    props.type === \"search\" &&\n      \"[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none\",\n    props.type === \"number\" &&\n      \"[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none\",\n    props.type === \"file\" &&\n      \"text-muted-foreground file:me-3 file:bg-transparent file:font-medium file:text-foreground file:text-sm\",\n  );\n  let inputElement: React.ReactElement;\n\n  if (nativeInput) {\n    const { style, onValueChange: _onValueChange, ...nativeInputProps } = props;\n    const nativeStyle = typeof style === \"function\" ? undefined : style;\n\n    inputElement = (\n      <input\n        className={inputClassName}\n        data-slot=\"input\"\n        size={typeof size === \"number\" ? size : undefined}\n        style={nativeStyle}\n        {...(nativeInputProps as React.ComponentProps<\"input\">)}\n      />\n    );\n  } else {\n    inputElement = (\n      <InputPrimitive\n        className={inputClassName}\n        data-slot=\"input\"\n        size={typeof size === \"number\" ? size : undefined}\n        {...props}\n      />\n    );\n  }\n\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-autofill:bg-foreground/4 has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] has-focus-visible:ring-inset sm:text-sm dark:bg-input/32 dark:has-autofill:bg-foreground/8 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:not-has-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n          !unstyled &&\n            size === \"compact\" &&\n            \"rounded-md before:rounded-[calc(var(--radius-md)-1px)]\",\n          font === \"mono\" && \"font-mono tabular-nums\",\n          className,\n        ) || undefined\n      }\n      data-size={size}\n      data-slot=\"input-control\"\n    >\n      {inputElement}\n    </span>\n  );\n}\n\nexport { Input, type InputProps };\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "registry/default/lib/utils.ts",
+      "content": "import { type CxOptions, cx } from \"class-variance-authority\";\nimport { extendTailwindMerge } from \"tailwind-merge\";\n\n// Register the extra font sizes extracted from T3 Code's theme so tailwind-merge\n// does not treat text-2xs etc. as colors.\nconst twMerge = extendTailwindMerge({\n  extend: {\n    theme: { text: [\"2xs\", \"3xs\", \"4xs\", \"5xs\"] },\n  },\n});\n\nexport function cn(...inputs: CxOptions) {\n  return twMerge(cx(inputs));\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:ui"
+}

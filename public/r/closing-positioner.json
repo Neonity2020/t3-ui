@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "closing-positioner",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/default/ui/closing-positioner.tsx",
+      "content": "import { useState, type ComponentProps, type CSSProperties } from \"react\";\n\nconst PLACEMENT_KEYS = [\"position\", \"top\", \"right\", \"bottom\", \"left\", \"transform\"] as const;\n\ntype Placement = Pick<CSSProperties, (typeof PLACEMENT_KEYS)[number]>;\n\nfunction ClosingPositioner({ open, style, ...props }: ComponentProps<\"div\"> & { open: boolean }) {\n  const [openPlacement, setOpenPlacement] = useState<Placement>({});\n  if (open && style && PLACEMENT_KEYS.some((key) => style[key] !== openPlacement[key])) {\n    const { position, top, right, bottom, left, transform } = style;\n    setOpenPlacement({ position, top, right, bottom, left, transform });\n  }\n  return <div {...props} style={open ? style : { ...style, ...openPlacement }} />;\n}\n\nexport function renderClosingPositioner(props: ComponentProps<\"div\">, state: { open: boolean }) {\n  return <ClosingPositioner {...props} open={state.open} />;\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

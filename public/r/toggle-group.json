@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toggle-group",
+  "dependencies": [
+    "@base-ui/react",
+    "class-variance-authority",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [
+    "@t3ui/toggle"
+  ],
+  "files": [
+    {
+      "path": "registry/default/ui/toggle-group.tsx",
+      "content": "import type { Toggle as TogglePrimitive } from \"@base-ui/react/toggle\";\nimport { ToggleGroup as ToggleGroupPrimitive } from \"@base-ui/react/toggle-group\";\nimport type { VariantProps } from \"class-variance-authority\";\nimport * as React from \"react\";\n\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Toggle as ToggleComponent, type toggleVariants } from \"@/registry/default/ui/toggle\";\n\nconst ToggleGroupContext = React.createContext<VariantProps<typeof toggleVariants>>({\n  size: \"default\",\n  variant: \"default\",\n});\n\nfunction ToggleGroup({\n  className,\n  variant = \"segmented\",\n  size: sizeProp,\n  orientation = \"horizontal\",\n  children,\n  ...props\n}: ToggleGroupPrimitive.Props & VariantProps<typeof toggleVariants>) {\n  const size =\n    sizeProp === undefined ? (variant === \"segmented\" ? \"segmented\" : \"default\") : sizeProp;\n  const value = { size, variant };\n  return (\n    <ToggleGroupPrimitive\n      className={cn(\n        \"flex w-fit *:focus-visible:z-10 dark:*:[[data-slot=separator]:has(+[data-slot=toggle]:hover)]:before:bg-input/64 dark:*:[[data-slot=separator]:has(+[data-slot=toggle][data-pressed])]:before:bg-input dark:*:[[data-slot=toggle]:hover+[data-slot=separator]]:before:bg-input/64 dark:*:[[data-slot=toggle][data-pressed]+[data-slot=separator]]:before:bg-input\",\n        orientation === \"horizontal\"\n          ? \"*:pointer-coarse:after:min-w-auto\"\n          : \"*:pointer-coarse:after:min-h-auto\",\n        variant === \"segmented\"\n          ? \"gap-0.5 rounded-lg bg-input/40 p-0.5\"\n          : variant === \"default\"\n            ? \"gap-0.5\"\n            : orientation === \"horizontal\"\n              ? \"*:not-first:not-data-[slot=separator]:before:-start-[0.5px] *:not-last:not-data-[slot=separator]:before:-end-[0.5px] *:not-first:rounded-s-none *:not-last:rounded-e-none *:not-first:border-s-0 *:not-last:border-e-0 *:not-first:before:rounded-s-none *:not-last:before:rounded-e-none\"\n              : \"*:not-first:not-data-[slot=separator]:before:-top-[0.5px] *:not-last:not-data-[slot=separator]:before:-bottom-[0.5px] flex-col *:not-first:rounded-t-none *:not-last:rounded-b-none *:not-first:border-t-0 *:not-last:border-b-0 *:not-first:before:rounded-t-none *:not-last:before:rounded-b-none *:data-[slot=toggle]:not-last:before:hidden dark:*:last:before:hidden dark:*:first:before:block\",\n        className,\n      )}\n      data-size={size}\n      data-slot=\"toggle-group\"\n      data-variant={variant}\n      orientation={orientation}\n      {...props}\n    >\n      <ToggleGroupContext value={value}>{children}</ToggleGroupContext>\n    </ToggleGroupPrimitive>\n  );\n}\n\nfunction Toggle({\n  className,\n  children,\n  variant,\n  size,\n  ...props\n}: TogglePrimitive.Props & VariantProps<typeof toggleVariants>) {\n  const context = React.use(ToggleGroupContext);\n\n  const resolvedVariant = variant ?? context.variant;\n  const resolvedSize = size ?? context.size;\n\n  return (\n    <ToggleComponent\n      className={className}\n      data-size={resolvedSize}\n      data-variant={resolvedVariant}\n      size={resolvedSize}\n      variant={resolvedVariant}\n      {...props}\n    >\n      {children}\n    </ToggleComponent>\n  );\n}\n\nexport { ToggleGroup, Toggle, Toggle as ToggleGroupItem };\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "registry/default/lib/utils.ts",
+      "content": "import { type CxOptions, cx } from \"class-variance-authority\";\nimport { extendTailwindMerge } from \"tailwind-merge\";\n\n// Register the extra font sizes extracted from T3 Code's theme so tailwind-merge\n// does not treat text-2xs etc. as colors.\nconst twMerge = extendTailwindMerge({\n  extend: {\n    theme: { text: [\"2xs\", \"3xs\", \"4xs\", \"5xs\"] },\n  },\n});\n\nexport function cn(...inputs: CxOptions) {\n  return twMerge(cx(inputs));\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:ui"
+}

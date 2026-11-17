@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "textarea",
+  "dependencies": [
+    "@base-ui/react",
+    "class-variance-authority",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/default/ui/textarea.tsx",
+      "content": "import { Field as FieldPrimitive } from \"@base-ui/react/field\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport type * as React from \"react\";\n\nimport { cn } from \"@/registry/default/lib/utils\";\n\ntype TextareaProps = React.ComponentProps<\"textarea\"> & {\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  unstyled?: boolean;\n};\n\nfunction Textarea({\n  className,\n  size = \"default\",\n  unstyled = false,\n  rows,\n  ...props\n}: TextareaProps) {\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] has-focus-visible:ring-inset not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n          className,\n        ) || undefined\n      }\n      data-size={size}\n      data-slot=\"textarea-control\"\n    >\n      <FieldPrimitive.Control\n        render={(defaultProps) => (\n          <textarea\n            className={cn(\n              \"field-sizing-content max-h-64 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] outline-none wrap-anywhere\",\n              rows === undefined && \"min-h-17.5 max-sm:min-h-20.5\",\n              size === \"sm\" && \"px-[calc(--spacing(2.5)-1px)] py-[calc(--spacing(1)-1px)]\",\n              size === \"sm\" && rows === undefined && \"min-h-16.5 max-sm:min-h-19.5\",\n              size === \"lg\" && \"py-[calc(--spacing(2)-1px)]\",\n              size === \"lg\" && rows === undefined && \"min-h-18.5 max-sm:min-h-21.5\",\n            )}\n            // field-sizing: content ignores `rows`, so an explicit row count sets the minimum height.\n            style={\n              rows === undefined\n                ? undefined\n                : {\n                    minHeight: `calc(${rows}lh + 2 * (var(--spacing) * ${size === \"sm\" ? 1 : size === \"lg\" ? 2 : 1.5} - 1px))`,\n                  }\n            }\n            data-slot=\"textarea\"\n            rows={rows}\n            {...mergeProps(defaultProps, props)}\n          />\n        )}\n      />\n    </span>\n  );\n}\n\nexport { Textarea, type TextareaProps };\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "registry/default/lib/utils.ts",
+      "content": "import { type CxOptions, cx } from \"class-variance-authority\";\nimport { extendTailwindMerge } from \"tailwind-merge\";\n\n// Register the extra font sizes extracted from T3 Code's theme so tailwind-merge\n// does not treat text-2xs etc. as colors.\nconst twMerge = extendTailwindMerge({\n  extend: {\n    theme: { text: [\"2xs\", \"3xs\", \"4xs\", \"5xs\"] },\n  },\n});\n\nexport function cn(...inputs: CxOptions) {\n  return twMerge(cx(inputs));\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:ui"
+}

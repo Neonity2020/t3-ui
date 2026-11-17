@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "preview-card",
+  "dependencies": [
+    "@base-ui/react",
+    "class-variance-authority",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/default/ui/preview-card.tsx",
+      "content": "import { PreviewCard as PreviewCardPrimitive } from \"@base-ui/react/preview-card\";\n\nimport { cn } from \"@/registry/default/lib/utils\";\n\nconst PreviewCard = PreviewCardPrimitive.Root;\n\nfunction PreviewCardTrigger(props: PreviewCardPrimitive.Trigger.Props) {\n  return <PreviewCardPrimitive.Trigger data-slot=\"preview-card-trigger\" {...props} />;\n}\n\nfunction PreviewCardPopup({\n  className,\n  align = \"start\",\n  side = \"top\",\n  sideOffset = 6,\n  ...props\n}: PreviewCardPrimitive.Popup.Props & {\n  align?: PreviewCardPrimitive.Positioner.Props[\"align\"];\n  side?: PreviewCardPrimitive.Positioner.Props[\"side\"];\n  sideOffset?: PreviewCardPrimitive.Positioner.Props[\"sideOffset\"];\n}) {\n  return (\n    <PreviewCardPrimitive.Portal>\n      <PreviewCardPrimitive.Positioner\n        align={align}\n        className=\"z-[140] max-w-(--available-width)\"\n        data-slot=\"preview-card-positioner\"\n        side={side}\n        sideOffset={sideOffset}\n      >\n        <PreviewCardPrimitive.Popup\n          className={cn(\n            \"origin-(--transform-origin) rounded-lg border bg-popover text-popover-foreground shadow-lg outline-none transition-[scale,opacity] data-ending-style:scale-98 data-starting-style:scale-98 data-ending-style:opacity-0 data-starting-style:opacity-0\",\n            className,\n          )}\n          data-slot=\"preview-card-popup\"\n          {...props}\n        />\n      </PreviewCardPrimitive.Positioner>\n    </PreviewCardPrimitive.Portal>\n  );\n}\n\nexport { PreviewCard, PreviewCardPopup, PreviewCardTrigger };\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "registry/default/lib/utils.ts",
+      "content": "import { type CxOptions, cx } from \"class-variance-authority\";\nimport { extendTailwindMerge } from \"tailwind-merge\";\n\n// Register the extra font sizes extracted from T3 Code's theme so tailwind-merge\n// does not treat text-2xs etc. as colors.\nconst twMerge = extendTailwindMerge({\n  extend: {\n    theme: { text: [\"2xs\", \"3xs\", \"4xs\", \"5xs\"] },\n  },\n});\n\nexport function cn(...inputs: CxOptions) {\n  return twMerge(cx(inputs));\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:ui"
+}

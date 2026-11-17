@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spinner",
+  "dependencies": [
+    "class-variance-authority",
+    "lucide-react",
+    "tailwind-merge"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/default/ui/spinner.tsx",
+      "content": "import { LoaderCircleIcon } from \"lucide-react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { observeVisibleAnimation } from \"@/registry/default/lib/visible-animation\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\n// No default size: inside a Button the parent's svg rule sizes the glyph.\nconst spinnerVariants = cva(\"motion-safe:visible-animate-spin\", {\n  variants: {\n    size: {\n      xs: \"size-3\",\n      sm: \"size-3.5\",\n      md: \"size-4\",\n      lg: \"size-5\",\n    },\n    tone: {\n      current: \"\",\n      muted: \"text-muted-foreground\",\n    },\n  },\n  defaultVariants: { tone: \"current\" },\n});\n\nfunction Spinner({\n  className,\n  size,\n  tone,\n  ...props\n}: React.ComponentPropsWithoutRef<typeof LoaderCircleIcon> & VariantProps<typeof spinnerVariants>) {\n  return (\n    <LoaderCircleIcon\n      aria-label=\"Loading\"\n      ref={observeVisibleAnimation}\n      className={cn(spinnerVariants({ size, tone }), className)}\n      role=\"status\"\n      {...props}\n    />\n  );\n}\n\nexport { Spinner };\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "registry/default/lib/utils.ts",
+      "content": "import { type CxOptions, cx } from \"class-variance-authority\";\nimport { extendTailwindMerge } from \"tailwind-merge\";\n\n// Register the extra font sizes extracted from T3 Code's theme so tailwind-merge\n// does not treat text-2xs etc. as colors.\nconst twMerge = extendTailwindMerge({\n  extend: {\n    theme: { text: [\"2xs\", \"3xs\", \"4xs\", \"5xs\"] },\n  },\n});\n\nexport function cn(...inputs: CxOptions) {\n  return twMerge(cx(inputs));\n}\n",
+      "type": "registry:lib"
+    },
+    {
+      "path": "registry/default/lib/visible-animation.ts",
+      "content": "interface ObservedAnimation {\n  element: HTMLElement | SVGElement;\n  intersecting: boolean;\n}\n\nconst animations = new Map<Element, ObservedAnimation>();\nlet observer: IntersectionObserver | null = null;\nlet reducedMotion: MediaQueryList | null = null;\n\nfunction updateAnimation(animation: ObservedAnimation) {\n  const running =\n    animation.intersecting && document.visibilityState === \"visible\" && !reducedMotion?.matches;\n  animation.element.style.setProperty(\"--visible-animation-state\", running ? \"running\" : \"paused\");\n  animation.element.style.setProperty(\n    \"--visible-animation-will-change\",\n    running ? \"transform\" : \"auto\",\n  );\n}\n\nfunction updateAnimations() {\n  for (const animation of animations.values()) updateAnimation(animation);\n}\n\nexport function observeVisibleAnimation(element: HTMLElement | SVGElement | null) {\n  if (element === null) return;\n  element.style.setProperty(\"--visible-animation-state\", \"paused\");\n  element.style.setProperty(\"--visible-animation-will-change\", \"auto\");\n  if (typeof IntersectionObserver === \"undefined\") return;\n\n  if (observer === null) {\n    reducedMotion = window.matchMedia(\"(prefers-reduced-motion: reduce)\");\n    reducedMotion.addEventListener(\"change\", updateAnimations);\n    document.addEventListener(\"visibilitychange\", updateAnimations);\n    observer = new IntersectionObserver((entries, source) => {\n      if (source !== observer) return;\n      for (const entry of entries) {\n        const animation = animations.get(entry.target);\n        if (!animation) continue;\n        animation.intersecting = entry.isIntersecting;\n        updateAnimation(animation);\n      }\n    });\n  }\n\n  const animation = { element, intersecting: false };\n  animations.set(element, animation);\n  observer.observe(element);\n\n  return () => {\n    if (animations.get(element) !== animation) return;\n    animations.delete(element);\n    observer?.unobserve(element);\n    element.style.setProperty(\"--visible-animation-state\", \"paused\");\n    element.style.setProperty(\"--visible-animation-will-change\", \"auto\");\n    if (animations.size === 0) {\n      observer?.disconnect();\n      observer = null;\n      reducedMotion?.removeEventListener(\"change\", updateAnimations);\n      reducedMotion = null;\n      document.removeEventListener(\"visibilitychange\", updateAnimations);\n    }\n  };\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:ui"
+}
